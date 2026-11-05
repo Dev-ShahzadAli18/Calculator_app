@@ -2,7 +2,7 @@ import 'package:calculator_appp/logic/calculator_function.dart';
 import 'package:calculator_appp/logic/logic.dart';
 import 'package:calculator_appp/utils/app_colors.dart';
 import 'package:calculator_appp/widgets/custom_button.dart';
-import 'package:calculator_appp/widgets/custom_container.dart';
+import 'package:calculator_appp/widgets/custom_display.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
@@ -91,7 +91,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
           child: Column(
             children: [
               Expanded(
-                child: CustomContainer(
+                child: CustomDisplay(
                   controller: _controller,
                   answer: _logic.answer,
                   yourvalues: _yourvalues,

@@ -1,14 +1,14 @@
 import 'package:calculator_appp/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 
-class CustomContainer extends StatelessWidget {
+class CustomDisplay extends StatelessWidget {
   final TextEditingController controller;
   final String answer;
   final String yourvalues;
   final bool showCursor;
   final VoidCallback onTap;
 
-  const CustomContainer({
+  const CustomDisplay({
     super.key,
     required this.controller,
     required this.answer,
