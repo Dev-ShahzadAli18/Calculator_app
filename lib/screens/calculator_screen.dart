@@ -1,4 +1,3 @@
-import 'package:calculator_appp/logic/calculator_function.dart';
 import 'package:calculator_appp/logic/logic.dart';
 import 'package:calculator_appp/utils/app_colors.dart';
 import 'package:calculator_appp/widgets/custom_button.dart';
@@ -63,15 +62,21 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
     setState(() {
       _showCursor = false;
 
-      handleButtonPress(value, _controller, _logic, (newanswer) {
-        if (value == '=') {
-          _yourvalues = newanswer;
-        } else if (value == 'C') {
-          _yourvalues = '';
-        } else if (value == '%') {
-          _yourvalues = newanswer;
-        }
-      }, () {});
+      _logic.handleButtonPress(value);
+
+      _controller.text = _logic.selectvalue;
+
+      _controller.selection = TextSelection.collapsed(
+        offset: _controller.text.length,
+      );
+
+      if (value == '=') {
+        _yourvalues = _logic.selectvalue;
+      } else if (value == 'C') {
+        _yourvalues = '';
+      } else if (value == '%') {
+        _yourvalues = _logic.selectvalue;
+      }
     });
   }
 

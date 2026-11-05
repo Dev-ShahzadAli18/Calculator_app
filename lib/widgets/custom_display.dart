@@ -19,13 +19,13 @@ class CustomDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool hasResult = answer.isNotEmpty;
+    bool isResult = answer.isNotEmpty;
 
     return Container(
       width: double.infinity,
       alignment: Alignment.bottomRight,
       padding: EdgeInsets.symmetric(vertical: 0),
-      child: hasResult
+      child: isResult
           ? Column(
               mainAxisAlignment: MainAxisAlignment.end,
               crossAxisAlignment: CrossAxisAlignment.end,
@@ -33,14 +33,14 @@ class CustomDisplay extends StatelessWidget {
                 Text(
                   yourvalues,
                   textAlign: TextAlign.right,
-                  style: TextStyle(fontSize: 20, color: Colors.grey),
+                  style: TextStyle(fontSize: 30, color: Colors.grey),
                 ),
                 SizedBox(height: 12),
                 Text(
                   answer,
                   textAlign: TextAlign.right,
                   style: TextStyle(
-                    fontSize: 30,
+                    fontSize: 35,
                     fontWeight: FontWeight.bold,
                     color: AppColors.operatorButton,
                   ),

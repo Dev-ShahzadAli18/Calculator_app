@@ -1,3 +1,5 @@
+import 'package:math_expressions/math_expressions.dart';
+
 class CalculatorLogic {
   String selectvalue = '0';
   String answer = '';
@@ -9,20 +11,22 @@ class CalculatorLogic {
     } else if (value == '⌫') {
       _backspace();
     } else if (value == '=') {
-      _calculateResult();
+      _calculate();
     } else if (value == '%') {
       _percentage();
     } else {
-      _appendValue(value);
+      _addValue(value);
     }
   }
 
+  // Clear calculator
   void _reset() {
     selectvalue = '0';
     answer = '';
     isequalpress = false;
   }
 
+  // Delete last character
   void _backspace() {
     if (isequalpress) {
       _reset();
@@ -34,56 +38,70 @@ class CalculatorLogic {
     } else {
       selectvalue = '0';
     }
+
+    answer = '';
   }
 
+  // Percentage
   void _percentage() {
-    if (isequalpress && answer.isNotEmpty) {
-      double value = double.parse(answer);
+    if (isequalpress) {
+      if (answer.isEmpty || answer == 'Error') return;
 
-      selectvalue = '$answer%';
-      answer = _formatResult(value / 100);
-
-      isequalpress = true;
-    } else {
-      if (!selectvalue.endsWith('%')) {
-        selectvalue += '%';
-      }
+      selectvalue = answer;
+      answer = '';
+      isequalpress = false;
     }
+
+    if (selectvalue.endsWith('%')) return;
+
+    if ('+-×÷.'.contains(selectvalue[selectvalue.length - 1])) {
+      return;
+    }
+
+    selectvalue += '%';
+    _calculate();
   }
 
-  void _appendValue(String val) {
+  // Add numbers and operators
+  void _addValue(String value) {
+    const operators = '+-×÷';
+
+    if (operators.contains(value) &&
+        operators.contains(selectvalue[selectvalue.length - 1])) {
+      return;
+    }
+
     if (isequalpress) {
-      if (val == '+' || val == '-' || val == '×' || val == '÷') {
-        selectvalue = answer + val;
+      if (operators.contains(value)) {
+        selectvalue = answer + value;
       } else {
-        selectvalue = val;
+        selectvalue = value;
       }
 
       answer = '';
       isequalpress = false;
-      return;
-    }
-
-    if (selectvalue == '0' &&
-        val != '.' &&
-        val != '+' &&
-        val != '-' &&
-        val != '×' &&
-        val != '÷') {
-      selectvalue = val;
+    } else if (selectvalue == '0' && value != '.') {
+      selectvalue = value;
     } else {
-      selectvalue += val;
+      selectvalue += value;
     }
   }
 
-  void _calculateResult() {
+  // Calculate using math_expressions
+  void _calculate() {
     try {
-      String finalvalue = selectvalue
+      String expression = selectvalue
           .replaceAll('×', '*')
           .replaceAll('÷', '/')
-          .replaceAll('−', '-');
+          .replaceAll('%', '/100');
 
-      double result = _evaluateBasic(finalvalue);
+      Parser parser = Parser();
+      Expression parsedExpression = parser.parse(expression);
+
+      double result = parsedExpression.evaluate(
+        EvaluationType.REAL,
+        ContextModel(),
+      );
 
       answer = _formatResult(result);
       isequalpress = true;
@@ -92,67 +110,16 @@ class CalculatorLogic {
     }
   }
 
+  // Format answer
   String _formatResult(double result) {
     if (!result.isFinite) {
       return 'Error';
     }
 
-    return result == result.toInt()
-        ? result.toInt().toString()
-        : result.toString();
-  }
-
-  double _evaluateBasic(String expression) {
-    List<String> values = [];
-    String current = '';
-
-    for (int i = 0; i < expression.length; i++) {
-      String value = expression[i];
-
-      if (value == '+' || value == '-' || value == '*' || value == '/') {
-        values.add(current);
-        values.add(value);
-        current = '';
-      } else {
-        current += value;
-      }
+    if (result == result.toInt()) {
+      return result.toInt().toString();
     }
 
-    values.add(current);
-
-    for (int i = 0; i < values.length; i++) {
-      String op = values[i];
-
-      if (op == '*' || op == '/') {
-        double previous = double.parse(values[i - 1]);
-        double next = double.parse(values[i + 1]);
-
-        double res = op == '*' ? previous * next : previous / next;
-
-        if (op == '/' && next == 0) {
-          throw Exception('Cannot divide by zero');
-        }
-
-        values[i - 1] = res.toString();
-        values.removeAt(i);
-        values.removeAt(i);
-        i--;
-      }
-    }
-
-    double finalResult = double.parse(values[0]);
-
-    for (int i = 1; i < values.length; i += 2) {
-      String operator = values[i];
-      double next = double.parse(values[i + 1]);
-
-      if (operator == '+') {
-        finalResult += next;
-      } else if (operator == '-') {
-        finalResult -= next;
-      }
-    }
-
-    return finalResult;
+    return result.toString();
   }
 }
